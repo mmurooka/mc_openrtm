@@ -86,6 +86,8 @@ MCControl::MCControl(RTC::Manager* manager)
     m_qOutOut("qOut", m_qOut),
     m_pOutOut("pOut", m_pOut),
     m_rpyOutOut("rpyOut", m_rpyOut),
+    m_pgainOut("pgain", m_pgain),
+    m_dgainOut("dgain", m_dgain),
     m_MCControlServicePortPort("MCControlServicePort"),
     m_service0(this),
     init(init_controller())
@@ -141,6 +143,8 @@ RTC::ReturnCode_t MCControl::onInitialize()
   addOutPort("qOut", m_qOutOut);
   addOutPort("pOut", m_pOutOut);
   addOutPort("rpyOut", m_rpyOutOut);
+  addOutPort("pgain", m_pgainOut);
+  addOutPort("dgain", m_dgainOut);
 
   // Set service provider to Ports
   m_MCControlServicePortPort.registerProvider("service0", "MCControlService", m_service0);
@@ -360,6 +364,8 @@ RTC::ReturnCode_t MCControl::onExecute(RTC::UniqueId ec_id)
         const mc_solver::QPResultMsg & res = controller.send(t);
 #endif
         m_qOut.data.length(m_qIn.data.length());
+        m_pgain.data.length(m_qIn.data.length());
+        m_dgain.data.length(m_qIn.data.length());
         const auto & ref_joint_order = controller.robot().refJointOrder();
         for(unsigned int i = 0; i < ref_joint_order.size(); ++i)
         {
@@ -378,6 +384,22 @@ RTC::ReturnCode_t MCControl::onExecute(RTC::UniqueId ec_id)
           else
           {
             m_qOut.data[i] = m_qIn.data[i];
+          }
+          if(res.robots_state[0].pgain.count(ref_joint_order[i]))
+          {
+            m_pgain.data[i] = res.robots_state[0].pgain.at(ref_joint_order[i]);
+          }
+          else
+          {
+            m_pgain.data[i] = -1;
+          }
+          if(res.robots_state[0].dgain.count(ref_joint_order[i]))
+          {
+            m_dgain.data[i] = res.robots_state[0].dgain.at(ref_joint_order[i]);
+          }
+          else
+          {
+            m_dgain.data[i] = -1;
           }
         }
         /* FIXME Correction RPY convention here? */
@@ -404,9 +426,13 @@ RTC::ReturnCode_t MCControl::onExecute(RTC::UniqueId ec_id)
       m_qOut.tm = tm;
       m_rpyOut.tm = tm;
       m_pOut.tm = tm;
+      m_pgain.tm = tm;
+      m_dgain.tm = tm;
       m_qOutOut.write();
       m_pOutOut.write();
       m_rpyOutOut.write();
+      m_pgainOut.write();
+      m_dgainOut.write();
     }
     else
     {
