@@ -433,14 +433,24 @@ DEF JVRC-1 Humanoid {
 			  mass 3
 			  centerOfMass 0.04 0 -0.16
 		          momentsOfInertia [0.03192500000000001 0 0 0 0.03452500000000001 0 0 0 0.00865]
-			  children [
-			    Inline { url "lshank.wrl" }
-			    Transform {
-			      translation 0.04 0 -0.357
-			      children Inline { url "lankle.wrl" }
-			    }
-			  ]
 			}
+                        DEF L_KNEE_S_Sensor Joint {
+                          jointType "fixed"
+                          children [
+                            DEF lksensor ForceSensor {
+                              sensorId 6
+                            }
+                            DEF L_KNEE_S_Sensor Segment {
+                              children [
+                                Inline { url "lshank.wrl" }
+                                Transform {
+                                  translation 0.04 0 -0.357
+                                  children Inline { url "lankle.wrl" }
+                                }
+                              ]
+                            }
+                          ]
+                        }
 			DEF L_ANKLE_R Joint {
 	                  jointType "rotate"
 			  jointAxis "X"
@@ -538,10 +548,20 @@ DEF JVRC-1 Humanoid {
 		      mass 10
 		      centerOfMass 0.02 0 0.24
 		      momentsOfInertia [0.15708333333333335 0 0 0 0.10108333333333334 0 0 0 0.1366666666666667]
-		      children [
-		        Inline { url "chest.wrl" }
-		      ]
 		    }
+                    DEF WAIST_R_S_Sensor Joint {
+                      jointType "fixed"
+                      children [
+                        DEF backsensor ForceSensor {
+                          sensorId 4
+                        }
+                        DEF WAIST_R_S_Sensor Segment {
+                          children [
+                            Inline { url "chest.wrl" }
+                          ]
+                        }
+                      ]
+                    }
 		    DEF NECK_Y Joint {
 		      jointType "rotate"
 		      jointAxis "Z"
@@ -704,10 +724,20 @@ DEF JVRC-1 Humanoid {
 				      mass 1
 				      centerOfMass -0.02 0 -0.1
 				      momentsOfInertia [0.010675000000000002 0 0 0 0.010675000000000002 0 0 0 0.0026999999999999997]
-				      children [
-				        Inline { url "rlarm.wrl" }
-				      ]
 				    }
+                                    DEF R_ELBOW_P_S_Sensor Joint {
+                                      jointType "fixed"
+                                      children [
+                                        DEF resensor ForceSensor {
+                                          sensorId 5
+                                        }
+                                        DEF R_ELBOW_P_S_Sensor Segment {
+                                          children [
+                                            Inline { url "rlarm.wrl" }
+                                          ]
+                                        }
+                                      ]
+                                    }
 				    DEF R_ELBOW_Y Joint {
 				      jointType "rotate"
 				      jointAxis "Z"
